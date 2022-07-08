@@ -55,6 +55,7 @@ jobs:
       - run: poetry run pytest
 
       - name: Build container
+        id: docker_build
         uses: docker/build-push-action@v3
         with:
           context: .
@@ -62,3 +63,29 @@ jobs:
           tags: blindern/deployer:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+      - name: Deploy secondary from primary
+        if: github.ref == 'refs/heads/main'
+        run: |
+          curl --fail -L -i -H "authorization: bearer $DEPLOYER_TOKEN" -H "content-type: application/json" -X POST https://deployer.foreningenbs.no/deploy -d '
+          {
+            "service": "deployer-secondary",
+            "attributes": {
+              "image": "blindern/deployer@${{ steps.docker_build.outputs.digest }}"
+            }
+          }'
+        env:
+          DEPLOYER_TOKEN: ${{ secrets.DEPLOYER_TOKEN }}
+
+      - name: Deploy primary from secondary
+        if: github.ref == 'refs/heads/main'
+        run: |
+          curl --fail -L -i -H "authorization: bearer $DEPLOYER_TOKEN" -H "content-type: application/json" -X POST https://deployer-secondary.foreningenbs.no/deploy -d '
+          {
+            "service": "deployer-primary",
+            "attributes": {
+              "image": "blindern/deployer@${{ steps.docker_build.outputs.digest }}"
+            }
+          }'
+        env:
+          DEPLOYER_TOKEN: ${{ secrets.DEPLOYER_TOKEN }}
