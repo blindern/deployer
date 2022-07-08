@@ -72,4 +72,4 @@ def deploy(service_locks: ServiceLocks, config: Config, deployer: Deployer):
 
 @api.route("/")
 def hello():
-    return "https://github.com/blindern/drift"
+    return "https://github.com/blindern/deployer"
