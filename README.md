@@ -5,7 +5,7 @@ so that the services themself can trigger a deployment while still
 preserving least privileges (e.g. not having root accesses).
 
 It will update and deploy the Ansible playbook defined in
-https://github.com/blindern/drift/tree/master/ansible
+https://github.com/blindern/drift/tree/main/ansible
 
 The service exposes a JSON API that is used like this:
 

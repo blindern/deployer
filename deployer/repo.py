@@ -35,7 +35,7 @@ class TempRepo:
 
     def fetch_latest_and_reset(self):
         self._exec(["git", "fetch", "origin"]).check_returncode()
-        self._exec(["git", "reset", "--hard", "origin/master"]).check_returncode()
+        self._exec(["git", "reset", "--hard", "origin/main"]).check_returncode()
 
     def commit_changes(self, message: str):
         self._exec(["git", "commit", "-am", message]).check_returncode()
