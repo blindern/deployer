@@ -40,3 +40,24 @@ class TestDeployer:
         )
 
         assert mock_push_changes.call_count == 2
+
+    @patch("deployer.repo.TempRepo.push_changes")
+    def test_ansible(
+        self,
+        mock_push_changes: MagicMock,
+        injector: Injector,
+    ):
+        mock_push_changes.side_effect = [RaceException, None]
+
+        deployer = Deployer(
+            config=injector.get(Config),
+        )
+
+        deployer.handle(
+            service=SERVICES["test-service1"],
+            attributes={
+                "value": "hello",
+            },
+        )
+
+        assert mock_push_changes.assert_called_once
