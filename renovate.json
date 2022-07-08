@@ -1,0 +1,17 @@
+{
+  "extends": ["config:base"],
+  "lockFileMaintenance": {
+    "enabled": true
+  },
+  "pre-commit": {
+    "enabled": true
+  },
+  "major": {
+    "automerge": false
+  },
+  "automerge": true,
+  "automergeType": "branch",
+  "prCreation": "not-pending",
+  "stabilityDays": 3,
+  "prNotPendingHours": 74
+}
