@@ -28,7 +28,7 @@ class TempRepo:
 
     def checkout(self):
         self._exec(
-            ["git", "clone", "--depth", "1", "git@github.com:blindern/drift.git", "."]
+            ["git", "clone", "--depth", "1", self.config.git_repo, "."]
         ).check_returncode()
         self._exec(["git-crypt", "unlock", self.config.git_crypt_key_path])
         logger.info("Repo decrypted")

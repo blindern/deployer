@@ -72,8 +72,8 @@ class TestApp:
         response = client.post(
             "/deploy",
             json={
-                "service": "users-api",
-                "attributes": {"image": "blindern/users-api:20191229-0717-277"},
+                "service": "test-service1",
+                "attributes": {"value": "hello"},
             },
             headers={
                 "authorization": "bearer abc",
@@ -104,8 +104,8 @@ class TestApp:
             response = client.post(
                 "/deploy",
                 json={
-                    "service": "users-api",
-                    "attributes": {"image": "blindern/users-api:20191229-0717-277"},
+                    "service": "test-service1",
+                    "attributes": {"value": "hello"},
                 },
                 headers={
                     "authorization": "bearer abc",

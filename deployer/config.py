@@ -15,6 +15,9 @@ class Config:
         self.valid_tokens = self._require_env("VALID_TOKENS").split(",")
         self.git_crypt_key_path = self._require_env("GIT_CRYPT_KEY_PATH")
         self.skip_git_push = os.environ.get("SKIP_GIT_PUSH", "false") == "true"
+        self.git_repo = os.environ.get(
+            "GIT_REPO", "git@github.com:blindern/deployer-test.git"
+        )
 
         if self.skip_git_push:
             logger.warning("Will not push to Git on changes")

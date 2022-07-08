@@ -33,9 +33,9 @@ class TestDeployer:
         )
 
         deployer.handle(
-            service=SERVICES["users-api"],
+            service=SERVICES["test-service1"],
             attributes={
-                "image": "dummy",
+                "value": "hello",
             },
         )
 
