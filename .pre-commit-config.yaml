@@ -1,0 +1,31 @@
+default_language_version:
+  python: python3.10
+repos:
+- repo: https://github.com/PyCQA/autoflake
+  rev: v1.4
+  hooks:
+  - id: autoflake
+    args:
+    - --remove-all-unused-imports
+    - --in-place
+- repo: https://github.com/PyCQA/isort
+  rev: 5.10.1
+  hooks:
+  - id: isort
+- repo: https://github.com/psf/black
+  rev: 22.6.0
+  hooks:
+  - id: black
+- repo: local
+  hooks:
+    - id: mypy
+      name: mypy
+      entry: poetry run mypy --non-interactive --install-types
+      language: system
+      files: ^.*.(py|pyi)$
+      pass_filenames: true
+      require_serial: true
+- repo: https://github.com/PyCQA/flake8
+  rev: 4.0.1
+  hooks:
+  - id: flake8

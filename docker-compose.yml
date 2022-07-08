@@ -1,0 +1,15 @@
+# This is only used for development.
+version: '2'
+
+services:
+  server:
+    build: .
+    image: blindern/deployer
+    env_file: .env
+    environment:
+      GIT_CRYPT_KEY_PATH: /git-key
+    volumes:
+      - ./sshkey:/root/.ssh/id_rsa
+      - $GIT_CRYPT_KEY_PATH:/git-key
+    ports:
+      - '127.0.0.1:8000:8000'
