@@ -20,12 +20,20 @@ SERVICES: dict[str, Service] = {
             "image": "deployer_confluence_image",
         },
     ),
-    "deployer": Service(
-        service_name="deployer",
-        ansible_tag="service-deployer",
+    "deployer-primary": Service(
+        service_name="deployer-primary",
+        ansible_tag="service-deployer-primary",
         ansible_host="fcos-3",
         mappings={
-            "image": "deployer_deployer_image",
+            "image": "deployer_deployer_primary_image",
+        },
+    ),
+    "deployer-secondary": Service(
+        service_name="deployer-secondary",
+        ansible_tag="service-deployer-secondary",
+        ansible_host="fcos-3",
+        mappings={
+            "image": "deployer_deployer_secondary_image",
         },
     ),
     "dugnaden": Service(
