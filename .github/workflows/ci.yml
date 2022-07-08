@@ -36,6 +36,11 @@ jobs:
           echo "$GIT_SSH_KEY" >~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
 
+      - uses: actions/cache@v3
+        with:
+          path: ~/.cache/pypoetry/virtualenvs
+          key: venv-${{ runner.os }}-${{ hashFiles('poetry.lock') }}
+
       - run: pip install poetry
 
       - run: poetry install
