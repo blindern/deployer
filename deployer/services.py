@@ -44,6 +44,15 @@ SERVICES: dict[str, Service] = {
             "image": "deployer_dugnaden_image",
         },
     ),
+    "intern": Service(
+        service_name="intern",
+        ansible_tag="service-intern",
+        ansible_host="fcos-3",
+        mappings={
+            "backend_image": "deployer_intern_backend_image",
+            "frontend_image": "deployer_intern_frontend_image",
+        },
+    ),
     "ldap-master": Service(
         service_name="ldap-master",
         ansible_tag="service-ldap-master",
