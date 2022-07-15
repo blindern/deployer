@@ -3,6 +3,8 @@ import os
 
 from dotenv import load_dotenv
 
+from deployer.services import load_services_file
+
 load_dotenv()
 
 logger = logging.getLogger(__name__)
@@ -21,6 +23,9 @@ class Config:
 
         if self.skip_git_push:
             logger.warning("Will not push to Git on changes")
+
+        self.services_file = os.environ.get("SERVICES_FILE")
+        self.services = load_services_file(self.services_file)
 
     @staticmethod
     def _require_env(name: str) -> str:

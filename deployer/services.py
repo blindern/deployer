@@ -1,18 +1,25 @@
-from dataclasses import dataclass
+import json
+from pathlib import Path
+from typing import Optional
+
+from pydantic import BaseModel, StrictStr
 
 
-@dataclass
-class Service:
-    service_name: str
-    ansible_tag: str
-    ansible_host: str
+class ServiceModel(BaseModel):
+    service_name: StrictStr
+    ansible_tag: StrictStr
+    ansible_host: StrictStr
     # Entries that belong to this service.
     # api-value => deployer.json key
-    mappings: dict[str, str]
+    mappings: dict[StrictStr, StrictStr]
 
 
-SERVICES: dict[str, Service] = {
-    "confluence": Service(
+class ServicesModel(BaseModel):
+    __root__: dict[StrictStr, ServiceModel]
+
+
+SERVICES_LEGACY: dict[str, ServiceModel] = {
+    "confluence": ServiceModel(
         service_name="confluence",
         ansible_tag="service-confluence",
         ansible_host="fcos-1",
@@ -20,7 +27,7 @@ SERVICES: dict[str, Service] = {
             "image": "deployer_confluence_image",
         },
     ),
-    "deployer-primary": Service(
+    "deployer-primary": ServiceModel(
         service_name="deployer-primary",
         ansible_tag="service-deployer-primary",
         ansible_host="fcos-3",
@@ -28,7 +35,7 @@ SERVICES: dict[str, Service] = {
             "image": "deployer_deployer_primary_image",
         },
     ),
-    "deployer-secondary": Service(
+    "deployer-secondary": ServiceModel(
         service_name="deployer-secondary",
         ansible_tag="service-deployer-secondary",
         ansible_host="fcos-3",
@@ -36,7 +43,7 @@ SERVICES: dict[str, Service] = {
             "image": "deployer_deployer_secondary_image",
         },
     ),
-    "dugnaden": Service(
+    "dugnaden": ServiceModel(
         service_name="dugnaden",
         ansible_tag="service-dugnaden",
         ansible_host="fcos-3",
@@ -44,7 +51,7 @@ SERVICES: dict[str, Service] = {
             "image": "deployer_dugnaden_image",
         },
     ),
-    "intern": Service(
+    "intern": ServiceModel(
         service_name="intern",
         ansible_tag="service-intern",
         ansible_host="fcos-3",
@@ -53,7 +60,7 @@ SERVICES: dict[str, Service] = {
             "frontend_image": "deployer_intern_frontend_image",
         },
     ),
-    "ldap-master": Service(
+    "ldap-master": ServiceModel(
         service_name="ldap-master",
         ansible_tag="service-ldap-master",
         ansible_host="fcos-2",
@@ -61,7 +68,7 @@ SERVICES: dict[str, Service] = {
             "image": "deployer_ldap_master_image",
         },
     ),
-    "ldap-slave": Service(
+    "ldap-slave": ServiceModel(
         service_name="ldap-slave",
         ansible_tag="service-ldap-slave",
         ansible_host="fcos-3",
@@ -69,7 +76,7 @@ SERVICES: dict[str, Service] = {
             "image": "deployer_ldap_slave_image",
         },
     ),
-    "nginx-front-1": Service(
+    "nginx-front-1": ServiceModel(
         service_name="nginx-front-1",
         ansible_tag="service-nginx-front-1",
         ansible_host="fcos-3",
@@ -77,7 +84,7 @@ SERVICES: dict[str, Service] = {
             "image": "deployer_nginx_front_1_image",
         },
     ),
-    "okoreports": Service(
+    "okoreports": ServiceModel(
         service_name="okoreports",
         ansible_tag="service-okoreports",
         ansible_host="fcos-2",
@@ -86,7 +93,7 @@ SERVICES: dict[str, Service] = {
             "frontend_image": "deployer_okoreports_frontend_image",
         },
     ),
-    "simplesamlphp": Service(
+    "simplesamlphp": ServiceModel(
         service_name="simplesamlphp",
         ansible_tag="service-simplesamlphp",
         ansible_host="fcos-3",
@@ -94,7 +101,7 @@ SERVICES: dict[str, Service] = {
             "image": "deployer_simplesamlphp_image",
         },
     ),
-    "slack-invite-automation": Service(
+    "slack-invite-automation": ServiceModel(
         service_name="slack-invite-automation",
         ansible_tag="service-slack-invite-automation",
         ansible_host="fcos-2",
@@ -102,7 +109,7 @@ SERVICES: dict[str, Service] = {
             "image": "deployer_slack_invite_automation_image",
         },
     ),
-    "smaabruket-availability-api": Service(
+    "smaabruket-availability-api": ServiceModel(
         service_name="smaabruket-availability-api",
         ansible_tag="service-smaabruket-availability-api",
         ansible_host="fcos-2",
@@ -110,7 +117,7 @@ SERVICES: dict[str, Service] = {
             "image": "deployer_smaabruket_availability_api_image",
         },
     ),
-    "uka-billett": Service(
+    "uka-billett": ServiceModel(
         service_name="uka-billett",
         ansible_tag="service-uka-billett",
         ansible_host="fcos-1",
@@ -120,7 +127,7 @@ SERVICES: dict[str, Service] = {
             "frontend_image": "deployer_uka_billett_frontend_image",
         },
     ),
-    "uka-webserver": Service(
+    "uka-webserver": ServiceModel(
         service_name="uka-webserver",
         ansible_tag="service-uka-webserver",
         ansible_host="fcos-1",
@@ -128,7 +135,7 @@ SERVICES: dict[str, Service] = {
             "image": "deployer_uka_webserver_image",
         },
     ),
-    "users-api": Service(
+    "users-api": ServiceModel(
         service_name="users-api",
         ansible_tag="service-users-api",
         ansible_host="fcos-2",
@@ -136,7 +143,7 @@ SERVICES: dict[str, Service] = {
             "image": "deployer_users_api_image",
         },
     ),
-    "web-1": Service(
+    "web-1": ServiceModel(
         service_name="web-1",
         ansible_tag="service-web-1",
         ansible_host="fcos-3",
@@ -145,3 +152,12 @@ SERVICES: dict[str, Service] = {
         },
     ),
 }
+
+
+def load_services_file(path: Optional[str]) -> dict[str, ServiceModel]:
+    if path is None:
+        return SERVICES_LEGACY
+
+    data = json.loads(Path(path).read_text())
+    model = ServicesModel.parse_obj(data)
+    return model.__root__

@@ -7,7 +7,7 @@ from typing import Any
 
 from deployer.config import Config
 from deployer.repo import RaceException, TempRepo
-from deployer.services import Service
+from deployer.services import ServiceModel
 
 logger = logging.getLogger(__name__)
 
@@ -32,7 +32,7 @@ class Deployer:
     def _write_changes(
         self,
         repo: TempRepo,
-        service: Service,
+        service: ServiceModel,
         deployer_json_file: Path,
         patch_values: dict[str, str],
     ) -> None:
@@ -81,7 +81,7 @@ class Deployer:
     ) -> None:
         deployer_json_file.write_text(json.dumps(content, indent="  ") + "\n")
 
-    def handle(self, service: Service, attributes: dict[str, str]):
+    def handle(self, service: ServiceModel, attributes: dict[str, str]):
         patch_values: dict[str, str] = {}
         for key, value in attributes.items():
             if key not in service.mappings:

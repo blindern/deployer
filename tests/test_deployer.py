@@ -7,7 +7,6 @@ from deployer.config import Config
 from deployer.deployer import Deployer
 from deployer.injector import build_injector
 from deployer.repo import RaceException
-from deployer.services import SERVICES
 
 
 @pytest.fixture
@@ -28,12 +27,11 @@ class TestDeployer:
         mock_ansible_deploy.return_value = None
         mock_push_changes.side_effect = [RaceException, None]
 
-        deployer = Deployer(
-            config=injector.get(Config),
-        )
+        config = injector.get(Config)
+        deployer = Deployer(config=config)
 
         deployer.handle(
-            service=SERVICES["test-service1"],
+            service=config.services["test-service1"],
             attributes={
                 "value": "hello",
             },
@@ -49,12 +47,11 @@ class TestDeployer:
     ):
         mock_push_changes.side_effect = [RaceException, None]
 
-        deployer = Deployer(
-            config=injector.get(Config),
-        )
+        config = injector.get(Config)
+        deployer = Deployer(config=config)
 
         deployer.handle(
-            service=SERVICES["test-service1"],
+            service=config.services["test-service1"],
             attributes={
                 "value": "hello",
             },
