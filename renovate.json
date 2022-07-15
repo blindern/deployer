@@ -13,5 +13,13 @@
   "automergeType": "branch",
   "prCreation": "not-pending",
   "stabilityDays": 3,
-  "prNotPendingHours": 74
+  "prNotPendingHours": 74,
+  "regexManagers": [
+    {
+      "fileMatch": ["^Dockerfile$"],
+      "matchStrings": [
+        "datasource=(?<datasource>.*?) depName=(?<depName>.*?)\\sENV .*?_VERSION=(?<currentValue>.*)\\s"
+      ]
+    }
+  ]
 }

@@ -1,5 +1,8 @@
 FROM python:3.10-slim
 
+# renovate: datasource=pypi depName=ansible
+ENV ANSIBLE_VERSION=6.0
+
 RUN set -eux; \
     apt-get update; \
     apt-get install -y --no-install-recommends \
@@ -10,7 +13,11 @@ RUN set -eux; \
     rm -rf /var/lib/apt/lists/*; \
     pip install poetry; \
     git config --global user.name "Deployer"; \
-    git config --global user.email "it-gruppa@foreningenbs.no"
+    git config --global user.email "it-gruppa@foreningenbs.no"; \
+    # Installing Ansible takes a lot of space.
+    # Keep it in this layer to prevent it to be invalidated
+    # for other dependency changes.
+    pip install ansible==$ANSIBLE_VERSION
 
 WORKDIR /code
 COPY poetry.lock pyproject.toml /code/
