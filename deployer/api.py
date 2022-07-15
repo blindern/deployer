@@ -7,7 +7,6 @@ from werkzeug.exceptions import BadRequest
 from deployer.config import Config
 from deployer.deployer import Deployer
 from deployer.lock import ServiceLocks
-from deployer.services import SERVICES
 
 
 class DeployRequest(BaseModel):
@@ -52,10 +51,10 @@ def deploy(service_locks: ServiceLocks, config: Config, deployer: Deployer):
         current_app.logger.info(f"Invalid model: {e}")
         return text_response("Invalid model", 400)
 
-    if model.service not in SERVICES:
+    if model.service not in config.services:
         return text_response("Unknown service", 400)
 
-    service = SERVICES[model.service]
+    service = config.services[model.service]
 
     for key in model.attributes.keys():
         if key not in service.mappings:
