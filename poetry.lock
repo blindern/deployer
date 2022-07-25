@@ -11,7 +11,7 @@ ansible-core = ">=2.13.0,<2.14.0"
 
 [[package]]
 name = "ansible-core"
-version = "2.13.1"
+version = "2.13.2"
 description = "Radically simple IT automation"
 category = "main"
 optional = false
@@ -214,7 +214,7 @@ tornado = ["tornado (>=0.2)"]
 
 [[package]]
 name = "identify"
-version = "2.5.1"
+version = "2.5.2"
 description = "File identification library for Python"
 category = "dev"
 optional = false
@@ -502,10 +502,10 @@ optional = false
 python-versions = "*"
 
 [package.extras]
-examples = ["html5lib", "packaging", "pygraphviz", "requests"]
-lint = ["black", "flake8", "mypy", "isort", "types-requests"]
-release = ["build", "towncrier", "twine"]
-test = ["commentjson", "packaging", "pytest"]
+test = ["pytest", "packaging", "commentjson"]
+release = ["twine", "towncrier", "build"]
+lint = ["types-requests", "isort", "mypy", "flake8", "black"]
+examples = ["requests", "pygraphviz", "packaging", "html5lib"]
 
 [[package]]
 name = "six"
@@ -559,11 +559,14 @@ testing = ["coverage (>=4)", "coverage-enable-subprocess (>=1)", "flaky (>=3)", 
 
 [[package]]
 name = "werkzeug"
-version = "2.1.2"
+version = "2.2.0"
 description = "The comprehensive WSGI web application library."
 category = "main"
 optional = false
 python-versions = ">=3.7"
+
+[package.dependencies]
+MarkupSafe = ">=2.1.1"
 
 [package.extras]
 watchdog = ["watchdog"]
@@ -579,8 +582,8 @@ ansible = [
     {file = "ansible-6.0.0.tar.gz", hash = "sha256:641a2c27bc5768f9a8ad14880f1f6e571c1f2af1d45e76f271d76e3f74754c53"},
 ]
 ansible-core = [
-    {file = "ansible-core-2.13.1.tar.gz", hash = "sha256:abd478ceff1a0aba95e94ceab8dc820f407bcc0f0033dc546840cddc29a36958"},
-    {file = "ansible_core-2.13.1-py3-none-any.whl", hash = "sha256:45d55e052bcea487366b0893b22f247e913a1f0948197658b7f3532a37ab6841"},
+    {file = "ansible-core-2.13.2.tar.gz", hash = "sha256:b779d0e55a97717c0ee5e86b486aa67c07c2809ef477be2ac84ad091a8dd2ddb"},
+    {file = "ansible_core-2.13.2-py3-none-any.whl", hash = "sha256:331b869cf3bf9bab875f62b9a8586257bbcfb95b1db6c8d43424d70804996143"},
 ]
 atomicwrites = [
     {file = "atomicwrites-1.4.1.tar.gz", hash = "sha256:81b2c9071a49367a7f770170e5eec8cb66567cfbbc8c73d20ce5ca4a8d71cf11"},
@@ -744,8 +747,8 @@ gunicorn = [
     {file = "gunicorn-20.1.0.tar.gz", hash = "sha256:e0a968b5ba15f8a328fdfd7ab1fcb5af4470c28aaf7e55df02a99bc13138e6e8"},
 ]
 identify = [
-    {file = "identify-2.5.1-py2.py3-none-any.whl", hash = "sha256:0dca2ea3e4381c435ef9c33ba100a78a9b40c0bab11189c7cf121f75815efeaa"},
-    {file = "identify-2.5.1.tar.gz", hash = "sha256:3d11b16f3fe19f52039fb7e39c9c884b21cb1b586988114fbe42671f03de3e82"},
+    {file = "identify-2.5.2-py2.py3-none-any.whl", hash = "sha256:feaa9db2dc0ce333b453ce171c0cf1247bbfde2c55fc6bb785022d411a1b78b5"},
+    {file = "identify-2.5.2.tar.gz", hash = "sha256:a3d4c096b384d50d5e6dc5bc8b9bc44f1f61cefebd750a7b3e9f939b53fb214d"},
 ]
 iniconfig = [
     {file = "iniconfig-1.1.1-py2.py3-none-any.whl", hash = "sha256:011e24c64b7f47f6ebd835bb12a743f2fbe9a26d4cecaa7f53bc4f35ee9da8b3"},
@@ -994,6 +997,6 @@ virtualenv = [
     {file = "virtualenv-20.15.1.tar.gz", hash = "sha256:288171134a2ff3bfb1a2f54f119e77cd1b81c29fc1265a2356f3e8d14c7d58c4"},
 ]
 werkzeug = [
-    {file = "Werkzeug-2.1.2-py3-none-any.whl", hash = "sha256:72a4b735692dd3135217911cbeaa1be5fa3f62bffb8745c5215420a03dc55255"},
-    {file = "Werkzeug-2.1.2.tar.gz", hash = "sha256:1ce08e8093ed67d638d63879fd1ba3735817f7a80de3674d293f5984f25fb6e6"},
+    {file = "Werkzeug-2.2.0-py3-none-any.whl", hash = "sha256:81806f8a5b35e6cb1b39a6f28dabf0e123f069c8596119a1a9a43838870016cd"},
+    {file = "Werkzeug-2.2.0.tar.gz", hash = "sha256:fe8bcdcef40275ed915fc734c2527a39d705b57a716d4f09e790296abbd16a7f"},
 ]
