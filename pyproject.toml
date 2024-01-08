@@ -20,7 +20,7 @@ python = "^3.10"
 
 ansible = "6.0"
 Flask = "2.2.2"
-Flask-Injector = "0.14.0"
+Flask-Injector = "0.15.0"
 gunicorn = "20.1.0"
 injector = "0.20.1"
 NamedAtomicLock = "1.1.3"
