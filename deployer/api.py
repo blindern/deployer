@@ -46,7 +46,7 @@ def deploy(service_locks: ServiceLocks, config: Config, deployer: Deployer):
     current_app.logger.info("Received data: {}".format(body))
 
     try:
-        model = DeployRequest.parse_obj(body)
+        model = DeployRequest.model_validate(body)
     except ValidationError as e:
         current_app.logger.info(f"Invalid model: {e}")
         return text_response("Invalid model", 400)

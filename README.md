@@ -28,7 +28,7 @@ Authorization is based on pre-configured tokens.
 
 ## Development
 
-This has been built with Python 3.10.
+This has been built with Python 3.12.
 
 You need Poetry. See https://python-poetry.org/docs/#installation
 

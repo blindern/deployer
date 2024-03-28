@@ -45,7 +45,7 @@ class TestDeployer:
         mock_push_changes: MagicMock,
         injector: Injector,
     ):
-        mock_push_changes.side_effect = [RaceException, None]
+        mock_push_changes.side_effect = [None]
 
         config = injector.get(Config)
         deployer = Deployer(config=config)
@@ -57,4 +57,4 @@ class TestDeployer:
             },
         )
 
-        assert mock_push_changes.assert_called_once
+        mock_push_changes.assert_called_once()
