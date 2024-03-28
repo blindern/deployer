@@ -81,7 +81,9 @@ class Deployer:
     ) -> None:
         deployer_json_file.write_text(json.dumps(content, indent="  ") + "\n")
 
-    def handle(self, service: ServiceModel, attributes: dict[str, str]):
+    def handle(
+        self, service: ServiceModel, attributes: dict[str, str], force_deploy: bool
+    ):
         patch_values: dict[str, str] = {}
         for key, value in attributes.items():
             if key not in service.mappings:
@@ -106,9 +108,10 @@ class Deployer:
             updated_content = self._patch_content(previous_content, patch_values)
             if previous_content == updated_content:
                 logger.info("No changes found")
-                return
-
-            self._write_deployer_file(deployer_json_file, updated_content)
+                if not force_deploy:
+                    return
+            else:
+                self._write_deployer_file(deployer_json_file, updated_content)
 
             start = time.time()
 
@@ -120,12 +123,13 @@ class Deployer:
 
             logger.info(f"Ansible deploy completed in {time.time() - start} s")
 
-            self._write_changes(
-                repo=repo,
-                service=service,
-                deployer_json_file=deployer_json_file,
-                patch_values=patch_values,
-            )
+            if previous_content != updated_content:
+                self._write_changes(
+                    repo=repo,
+                    service=service,
+                    deployer_json_file=deployer_json_file,
+                    patch_values=patch_values,
+                )
 
         finally:
             repo.cleanup()

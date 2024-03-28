@@ -1,7 +1,7 @@
 import os
 
 from flask import Blueprint, Response, current_app, request
-from pydantic import BaseModel, StrictStr, ValidationError
+from pydantic import BaseModel, StrictBool, StrictStr, ValidationError
 from werkzeug.exceptions import BadRequest
 
 from deployer.config import Config
@@ -12,6 +12,9 @@ from deployer.lock import ServiceLocks
 class DeployRequest(BaseModel):
     service: StrictStr
     attributes: dict[StrictStr, StrictStr]
+    # Normally deploys only when an attribute is changed.
+    # Set this to true to always do a deploy for the service.
+    forceDeploy: StrictBool = False
 
 
 def text_response(value, status):
@@ -64,6 +67,7 @@ def deploy(service_locks: ServiceLocks, config: Config, deployer: Deployer):
         deployer.handle(
             service=service,
             attributes=model.attributes,
+            force_deploy=model.forceDeploy,
         )
 
     return text_response("OK\n", 200)

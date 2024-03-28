@@ -15,7 +15,8 @@ POST /deploy
   "service": "service-name",
   "attributes": {
     "image": "hello-world"
-  }
+  },
+  "forceDeploy": false
 }
 ```
 
