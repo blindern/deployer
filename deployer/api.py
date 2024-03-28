@@ -11,9 +11,10 @@ from deployer.lock import ServiceLocks
 
 class DeployRequest(BaseModel):
     service: StrictStr
-    attributes: dict[StrictStr, StrictStr]
+    attributes: dict[StrictStr, StrictStr] = {}
     # Normally deploys only when an attribute is changed.
     # Set this to true to always do a deploy for the service.
+    # If no attributes are given this will default to true.
     forceDeploy: StrictBool = False
 
 
@@ -67,7 +68,7 @@ def deploy(service_locks: ServiceLocks, config: Config, deployer: Deployer):
         deployer.handle(
             service=service,
             attributes=model.attributes,
-            force_deploy=model.forceDeploy,
+            force_deploy=model.forceDeploy or len(model.attributes) == 0,
         )
 
     return text_response("OK\n", 200)

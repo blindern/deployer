@@ -10,7 +10,7 @@ class ServiceModel(BaseModel):
     ansible_host: StrictStr
     # Entries that belong to this service.
     # api-value => deployer.json key
-    mappings: dict[StrictStr, StrictStr]
+    mappings: dict[StrictStr, StrictStr] = {}
 
 
 ServicesModel = RootModel[dict[StrictStr, ServiceModel]]
