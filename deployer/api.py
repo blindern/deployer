@@ -56,6 +56,7 @@ def deploy(service_locks: ServiceLocks, config: Config, deployer: Deployer):
         return text_response("Invalid model", 400)
 
     if model.service not in config.services:
+        current_app.logger.info(f"Unknown service: {model.service}")
         return text_response("Unknown service", 400)
 
     service = config.services[model.service]
