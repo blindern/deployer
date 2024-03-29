@@ -63,18 +63,25 @@ class Deployer:
     def _ansible_deploy(self, cwd: Path, tag: str, host: str):
         cmd = ["ansible-playbook", "site.yml", "-i", "hosts", "-l", host, "-t", tag]
         logger.info(f"Will run: {cmd}")
-        res = subprocess.run(
+
+        process = subprocess.Popen(
             cmd,
-            capture_output=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
             cwd=cwd,
         )
 
-        if res.stdout is not None:
-            logger.info(f"STDOUT: {res.stdout!r}")
-        if res.stderr is not None:
-            logger.info(f"STDERR: {res.stderr!r}")
+        assert process.stdout is not None
+        while process.stdout.readable():
+            line = process.stdout.readline()
+            if not line:
+                break
+            logger.info(f"[ANSIBLE] {line.decode()}".strip())
 
-        res.check_returncode()
+        returncode = process.wait()
+
+        if returncode != 0:
+            raise RuntimeError(f"Ansible failed with exit code {returncode}")
 
     def _write_deployer_file(
         self, deployer_json_file: Path, content: dict[str, str]
