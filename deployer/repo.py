@@ -49,7 +49,10 @@ class TempRepo:
             return
 
         res = self._exec(["git", "push"])
-        if res.stderr is not None and "non-fast-forward" in str(res.stderr):
+        if res.stderr is not None and (
+            "non-fast-forward" in str(res.stderr) or "(fetch first)" in str(res.stderr)
+        ):
+            print(res.stderr)
             raise RaceException()
         res.check_returncode()
 
