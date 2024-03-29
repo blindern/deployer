@@ -99,6 +99,7 @@ class Deployer:
 
         repo = TempRepo(self.config)
         try:
+            logger.info("Checking out repo")
             repo.checkout()
 
             deployer_json_file: Path = (
