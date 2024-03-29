@@ -12,7 +12,7 @@ def configure_logging():
     handler = logging.StreamHandler(sys.stdout)
     handler.setFormatter(
         RequestFormatter(
-            "[%(asctime)s] %(remote_addr)s %(levelname)s %(name)s %(message)s"
+            "[%(asctime)s] %(threadName)s %(remote_addr)s %(levelname)s %(name)s %(message)s"
         )
     )
 
