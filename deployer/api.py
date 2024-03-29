@@ -64,7 +64,7 @@ def deploy(service_locks: ServiceLocks, config: Config, deployer: Deployer):
         if key not in service.mappings:
             return text_response(f"Unknown attribute: '{key}'", 400)
 
-    with service_locks.hold_lock("test"):
+    with service_locks.hold_lock(service.service_name):
         deployer.handle(
             service=service,
             attributes=model.attributes,
