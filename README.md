@@ -20,7 +20,8 @@ POST /deploy
 }
 ```
 
-Configured services is located in `services.py`.
+Configured services is located at
+https://github.com/blindern/drift/blob/main/ansible/roles/service-deployer/files/services.json
 
 The request will block until it has completed deployment.
 On failure a 500 error will be given.
