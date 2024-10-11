@@ -1,4 +1,4 @@
-FROM python:3.12-slim
+FROM python:3.13-slim
 
 # renovate: datasource=pypi depName=ansible
 ENV ANSIBLE_VERSION=9.10.0
