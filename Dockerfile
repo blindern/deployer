@@ -1,7 +1,7 @@
 FROM python:3.13-slim
 
 # renovate: datasource=pypi depName=ansible
-ENV ANSIBLE_VERSION=9.10.0
+ENV ANSIBLE_VERSION=9.11.0
 
 RUN set -eux; \
     apt-get update; \
