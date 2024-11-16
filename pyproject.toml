@@ -19,7 +19,7 @@ package-mode = false
 [tool.poetry.dependencies]
 python = "^3.12"
 
-ansible = "9.12.0"
+ansible = "10.6.0"
 Flask = "3.1.0"
 Flask-Injector = "0.15.0"
 gunicorn = "21.2.0"
