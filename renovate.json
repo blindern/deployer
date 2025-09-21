@@ -23,6 +23,14 @@
     {
       "matchDepNames": ["isort", "PyCQA/isort"],
       "groupName": "isort"
+    },
+    {
+      "matchDepNames": ["autoflake", "PyCQA/autoflake"],
+      "groupName": "autoflake"
+    },
+    {
+      "matchDepNames": ["flake8", "PyCQA/flake8"],
+      "groupName": "flake8"
     }
   ]
 }
