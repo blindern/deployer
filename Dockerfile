@@ -22,4 +22,4 @@ COPY deployer /code/deployer
 COPY container/ssh_config /root/.ssh/config
 
 EXPOSE 8000
-CMD ["gunicorn", "--timeout", "900", "-b", "0.0.0.0:8000", "--threads", "4", "deployer.app:app"]
+CMD ["uv", "run", "gunicorn", "--timeout", "900", "-b", "0.0.0.0:8000", "--threads", "4", "deployer.app:app"]
