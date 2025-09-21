@@ -1,42 +1,44 @@
-[tool.mypy]
+[project]
+name = "blindern-deployer"
+version = "0.1.0"
+description = "Automated deployment of our services"
+authors = [{ name = "Henrik Steen", email = "henrist@henrist.net" }]
+requires-python = "==3.13.*"
+dependencies = [
+    "ansible==12.0.0",
+    "Flask==3.1.2",
+    "Flask-Injector==0.15.0",
+    "gunicorn==23.0.0",
+    "injector==0.22.0",
+    "NamedAtomicLock==1.1.3",
+    "pydantic==2.11.9",
+    "python-dotenv==1.1.1",
+]
+
+[dependency-groups]
+dev = [
+    "autoflake==2.3.1",
+    "black==25.1.0",
+    "flake8==7.3.0",
+    "isort==6.0.1",
+    "mypy==1.18.1",
+    "pre-commit==4.3.0",
+    "pytest==8.4.2",
+]
+
 [[tool.mypy.overrides]]
 module = [
     "NamedAtomicLock"
 ]
 ignore_missing_imports = true
 
+[tool.uv]
+package = false
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
 [tool.isort]
 profile = "black"
 include_trailing_comma = true
-
-[tool.poetry]
-name = "blindern-deployer"
-version = "0.1.0"
-description = "Automated deployment of our services"
-authors = ["Henrik Steen <henrist@henrist.net>"]
-package-mode = false
-
-[tool.poetry.dependencies]
-python = "^3.12"
-
-ansible = "12.0.0"
-Flask = "3.1.2"
-Flask-Injector = "0.15.0"
-gunicorn = "23.0.0"
-injector = "0.22.0"
-NamedAtomicLock = "1.1.3"
-pydantic = "2.11.9"
-python-dotenv = "1.1.1"
-
-[tool.poetry.dev-dependencies]
-autoflake = "2.3.1"
-black = "25.1.0"
-flake8 = "7.3.0"
-isort = "6.0.1"
-mypy = "1.18.1"
-pre-commit = "4.3.0"
-pytest = "8.4.2"
-
-[build-system]
-requires = ["poetry_core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"

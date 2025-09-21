@@ -1,5 +1,5 @@
 default_language_version:
-  python: python3.12
+  python: python3.13
 repos:
 - repo: https://github.com/PyCQA/autoflake
   rev: v2.3.1
@@ -20,7 +20,7 @@ repos:
   hooks:
     - id: mypy
       name: mypy
-      entry: poetry run mypy --non-interactive --install-types
+      entry: uv run mypy --non-interactive --install-types
       language: system
       files: ^.*.(py|pyi)$
       pass_filenames: true

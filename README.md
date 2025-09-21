@@ -30,9 +30,9 @@ Authorization is based on pre-configured tokens.
 
 ## Development
 
-This has been built with Python 3.12.
+This has been built with Python 3.13.
 
-You need Poetry. See https://python-poetry.org/docs/#installation
+You need `uv`. See https://docs.astral.sh/uv/
 
 Copy `.env.template` to `.env` and modify it to your needs.
 
@@ -40,20 +40,20 @@ You need to have a SSH key active that can be used to pull and push the `drift` 
 as well as having root access to all the servers (for Ansible).
 
 ```bash
-poetry install
-FLASK_APP=deployer.app poetry run flask run
+uv sync
+FLASK_APP=deployer.app uv run flask run
 ```
 
 To run tests:
 
 ```bash
-poetry run pytest
+uv run pytest
 ```
 
 Lint/fix all files:
 
 ```bash
-poetry run pre-commit run --all-files
+uv run pre-commit run --all-files
 ```
 
 ### Testing locally

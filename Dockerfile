@@ -1,7 +1,4 @@
-FROM python:3.13-slim
-
-# renovate: datasource=pypi depName=ansible
-ENV ANSIBLE_VERSION=12.0.0
+FROM python:3.13-slim@sha256:58c30f5bfaa718b5803a53393190b9c68bd517c44c6c94c1b6c8c172bcfad040
 
 RUN set -eux; \
     apt-get update; \
@@ -11,20 +8,15 @@ RUN set -eux; \
       openssh-client \
     ; \
     rm -rf /var/lib/apt/lists/*; \
-    pip install poetry; \
     git config --global user.name "Deployer"; \
-    git config --global user.email "it-gruppa@foreningenbs.no"; \
-    # Installing Ansible takes a lot of space.
-    # Keep it in this layer to prevent it to be invalidated
-    # for other dependency changes.
-    pip install ansible==$ANSIBLE_VERSION
+    git config --global user.email "it-gruppa@foreningenbs.no"
+
+COPY --from=ghcr.io/astral-sh/uv:0.8.19 /uv /uvx /bin/
 
 WORKDIR /code
-COPY poetry.lock pyproject.toml /code/
+COPY uv.lock pyproject.toml /code/
 
-RUN set -eux; \
-    poetry config virtualenvs.create false; \
-    poetry install --no-interaction --no-ansi
+RUN uv sync --locked --no-group dev
 
 COPY deployer /code/deployer
 COPY container/ssh_config /root/.ssh/config
