@@ -5,7 +5,7 @@ description = "Automated deployment of our services"
 authors = [{ name = "Henrik Steen", email = "henrist@henrist.net" }]
 requires-python = "==3.13.*"
 dependencies = [
-    "ansible==12.0.0",
+    "ansible==12.1.0",
     "Flask==3.1.2",
     "Flask-Injector==0.15.0",
     "gunicorn==23.0.0",
