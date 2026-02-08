@@ -10,7 +10,9 @@ class TestInjectTokenIntoUrl:
     def test_basic(self):
         url = "https://github.com/blindern/drift.git"
         result = GitHubAuth.inject_token_into_url(url, "ghp_abc123")
-        assert result == "https://x-access-token:ghp_abc123@github.com/blindern/drift.git"
+        assert (
+            result == "https://x-access-token:ghp_abc123@github.com/blindern/drift.git"
+        )
 
     def test_preserves_path(self):
         url = "https://github.com/org/repo.git"

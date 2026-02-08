@@ -30,7 +30,10 @@ class GitHubAuth:
         return jwt.encode(payload, self._private_key, algorithm="RS256")
 
     def _create_installation_token(self, token_jwt: str) -> str:
-        url = f"https://api.github.com/app/installations/{self._installation_id}/access_tokens"
+        url = (
+            f"https://api.github.com/app/installations"
+            f"/{self._installation_id}/access_tokens"
+        )
         req = urllib.request.Request(
             url,
             method="POST",
