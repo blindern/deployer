@@ -59,8 +59,10 @@ class TestApp:
 
     @patch("deployer.repo.TempRepo.push_changes")
     @patch("deployer.deployer.Deployer._ansible_deploy")
+    @patch("deployer.github_auth.GitHubAuth.get_token", return_value="fake-token")
     def test_success(
         self,
+        mock_get_token: MagicMock,
         mock_ansible_deploy: MagicMock,
         mock_push_changes: MagicMock,
         client: FlaskClient,

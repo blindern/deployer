@@ -3,6 +3,7 @@ import os
 
 from dotenv import load_dotenv
 
+from deployer.github_auth import GitHubAuth
 from deployer.services import load_services_file
 
 load_dotenv()
@@ -18,7 +19,13 @@ class Config:
         self.git_crypt_key_path = self._require_env("GIT_CRYPT_KEY_PATH")
         self.skip_git_push = os.environ.get("SKIP_GIT_PUSH", "false") == "true"
         self.git_repo = os.environ.get(
-            "GIT_REPO", "git@github.com:blindern/deployer-test.git"
+            "GIT_REPO", "https://github.com/blindern/deployer-test.git"
+        )
+
+        self.github_auth = GitHubAuth(
+            app_id=self._require_env("GITHUB_APP_ID"),
+            private_key_path=self._require_env("GITHUB_APP_PRIVATE_KEY_PATH"),
+            installation_id=self._require_env("GITHUB_APP_INSTALLATION_ID"),
         )
 
         if self.skip_git_push:

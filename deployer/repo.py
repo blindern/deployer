@@ -3,6 +3,7 @@ import subprocess
 from tempfile import TemporaryDirectory
 
 from deployer.config import Config
+from deployer.github_auth import GitHubAuth
 
 logger = logging.getLogger(__name__)
 
@@ -17,18 +18,29 @@ class TempRepo:
         self.path = self._repo_dir.name
         self.config = config
 
+        self._token = config.github_auth.get_token()
+        self._authed_url = GitHubAuth.inject_token_into_url(
+            config.git_repo, self._token
+        )
+
     def _exec(self, cmd: list[str]) -> subprocess.CompletedProcess:
         res = subprocess.run(cmd, cwd=self._repo_dir.name, capture_output=True)
         if res.stdout is not None:
-            logger.info(f"STDOUT: {res.stdout!r}")
+            stdout = GitHubAuth.redact_token(
+                res.stdout.decode(errors="replace"), self._token
+            )
+            logger.info(f"STDOUT: {stdout!r}")
         if res.stderr is not None:
-            logger.info(f"STDERR: {res.stderr!r}")
+            stderr = GitHubAuth.redact_token(
+                res.stderr.decode(errors="replace"), self._token
+            )
+            logger.info(f"STDERR: {stderr!r}")
 
         return res
 
     def checkout(self):
         self._exec(
-            ["git", "clone", "--depth", "1", self.config.git_repo, "."]
+            ["git", "clone", "--depth", "1", self._authed_url, "."]
         ).check_returncode()
         self._exec(["git-crypt", "unlock", self.config.git_crypt_key_path])
         logger.info("Repo decrypted")

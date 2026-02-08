@@ -36,8 +36,23 @@ You need `uv`. See https://docs.astral.sh/uv/
 
 Copy `.env.template` to `.env` and modify it to your needs.
 
-You need to have a SSH key active that can be used to pull and push the `drift` repo,
-as well as having root access to all the servers (for Ansible).
+### GitHub App setup
+
+Git auth uses a GitHub App that generates short-lived HTTPS tokens.
+
+Two apps exist:
+- **fbs-deployer** (app ID `2824237`, installation `108887063`) — installed on `blindern/drift` (production)
+- **fbs-deployer-test** (app ID `2824239`, installation `108886929`) — installed on `blindern/deployer-test` (CI/testing)
+
+To set up locally:
+1. Download the private key PEM file for the relevant GitHub App
+2. Set env vars in `.env`:
+   - `GITHUB_APP_ID` — the App ID
+   - `GITHUB_APP_PRIVATE_KEY_PATH` — path to the PEM file
+   - `GITHUB_APP_INSTALLATION_ID` — the installation ID
+3. Required App permission: **Contents: Read & write**
+
+You also need root access to all the servers (for Ansible).
 
 ```bash
 uv sync

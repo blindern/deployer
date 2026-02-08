@@ -17,8 +17,10 @@ def injector() -> Injector:
 class TestDeployer:
     @patch("deployer.repo.TempRepo.push_changes")
     @patch("deployer.deployer.Deployer._ansible_deploy")
+    @patch("deployer.github_auth.GitHubAuth.get_token", return_value="fake-token")
     def test_write_retry(
         self,
+        mock_get_token: MagicMock,
         mock_ansible_deploy: MagicMock,
         mock_push_changes: MagicMock,
         injector: Injector,
@@ -41,8 +43,10 @@ class TestDeployer:
         assert mock_push_changes.call_count == 2
 
     @patch("deployer.repo.TempRepo.push_changes")
+    @patch("deployer.github_auth.GitHubAuth.get_token", return_value="fake-token")
     def test_ansible(
         self,
+        mock_get_token: MagicMock,
         mock_push_changes: MagicMock,
         injector: Injector,
     ):
@@ -63,8 +67,10 @@ class TestDeployer:
 
     @patch("deployer.repo.TempRepo.push_changes")
     @patch("deployer.deployer.Deployer._ansible_deploy")
+    @patch("deployer.github_auth.GitHubAuth.get_token", return_value="fake-token")
     def test_skip_no_change(
         self,
+        mock_get_token: MagicMock,
         mock_ansible_deploy: MagicMock,
         mock_push_changes: MagicMock,
         injector: Injector,
@@ -86,8 +92,10 @@ class TestDeployer:
 
     @patch("deployer.repo.TempRepo.push_changes")
     @patch("deployer.deployer.Deployer._ansible_deploy")
+    @patch("deployer.github_auth.GitHubAuth.get_token", return_value="fake-token")
     def test_force_deploy_for_no_changes(
         self,
+        mock_get_token: MagicMock,
         mock_ansible_deploy: MagicMock,
         mock_push_changes: MagicMock,
         injector: Injector,

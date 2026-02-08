@@ -37,15 +37,12 @@ jobs:
           git config --global user.name "Deployer"
           git config --global user.email "it-gruppa@foreningenbs.no"
 
-      # This has been added as a deploy key to https://github.com/blindern/deployer-test
-      # It can easily be regenerated, just remember to add it to the repo.
-      - name: Install SSH key
+      - name: Setup test GitHub App key
         env:
-          GIT_SSH_KEY: ${{ secrets.GIT_SSH_KEY }}
+          TEST_GITHUB_APP_PRIVATE_KEY: ${{ secrets.TEST_GITHUB_APP_PRIVATE_KEY }}
         run: |
-          mkdir -p ~/.ssh
-          echo "$GIT_SSH_KEY" >~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
+          echo "$TEST_GITHUB_APP_PRIVATE_KEY" > /tmp/test-app-key.pem
+          chmod 600 /tmp/test-app-key.pem
 
       - run: uv sync --locked --all-extras --dev
 
@@ -57,6 +54,10 @@ jobs:
       - run: uv run pre-commit run --all-files
 
       - run: uv run pytest
+        env:
+          GITHUB_APP_ID: ${{ vars.TEST_GITHUB_APP_ID }}
+          GITHUB_APP_PRIVATE_KEY_PATH: /tmp/test-app-key.pem
+          GITHUB_APP_INSTALLATION_ID: ${{ vars.TEST_GITHUB_APP_INSTALLATION_ID }}
 
       - name: Build container
         id: docker_build

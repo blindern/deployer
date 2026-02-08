@@ -2,6 +2,7 @@
 /.mypy_cache/
 /.venv/
 /.vscode/
+*.pem
 /sshkey
 /sshkey.pub
 __pycache__/
