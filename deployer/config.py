@@ -30,8 +30,9 @@ class Config:
         )
 
         slug = self.github_auth.slug
+        bot_id = self.github_auth.bot_user_id
         self.git_committer_name = f"{slug}[bot]"
-        self.git_committer_email = f"{app_id}+{slug}[bot]@users.noreply.github.com"
+        self.git_committer_email = f"{bot_id}+{slug}[bot]@users.noreply.github.com"
 
         if self.skip_git_push:
             logger.warning("Will not push to Git on changes")

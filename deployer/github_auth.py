@@ -15,9 +15,9 @@ class GitHubAuth:
         self._installation_id = installation_id
         with open(private_key_path) as f:
             self._private_key = f.read()
-        self.slug = self._fetch_app_slug()
+        self.slug, self.bot_user_id = self._fetch_app_info()
 
-    def _fetch_app_slug(self) -> str:
+    def _fetch_app_info(self) -> tuple[str, int]:
         token_jwt = self._create_jwt()
         req = urllib.request.Request(
             "https://api.github.com/app",
@@ -28,7 +28,16 @@ class GitHubAuth:
         )
         with urllib.request.urlopen(req, timeout=30) as resp:
             data = json.loads(resp.read())
-        return data["slug"]
+        slug = data["slug"]
+
+        # Fetch bot user ID (different from app ID)
+        req = urllib.request.Request(
+            f"https://api.github.com/users/{slug}%5Bbot%5D",
+            headers={"Accept": "application/vnd.github+json"},
+        )
+        with urllib.request.urlopen(req, timeout=30) as resp:
+            user_data = json.loads(resp.read())
+        return slug, user_data["id"]
 
     def get_token(self) -> str:
         token_jwt = self._create_jwt()

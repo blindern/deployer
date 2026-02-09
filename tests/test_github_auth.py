@@ -47,6 +47,7 @@ class TestGetToken:
     def test_creates_installation_token(self, mock_urlopen: MagicMock):
         mock_urlopen.side_effect = [
             _mock_urlopen_response({"slug": "my-app"}),
+            _mock_urlopen_response({"id": 99999}),
             _mock_urlopen_response({"token": "ghs_test_token"}),
         ]
 
@@ -59,8 +60,9 @@ class TestGetToken:
             token = auth.get_token()
 
         assert auth.slug == "my-app"
+        assert auth.bot_user_id == 99999
         assert token == "ghs_test_token"
-        assert mock_urlopen.call_count == 2
+        assert mock_urlopen.call_count == 3
         req = mock_urlopen.call_args[0][0]
         assert "/installations/67890/access_tokens" in req.full_url
 
