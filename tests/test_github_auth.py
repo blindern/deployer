@@ -33,17 +33,22 @@ class TestRedactToken:
         assert result == text
 
 
+def _mock_urlopen_response(data: dict) -> MagicMock:
+    resp = MagicMock()
+    resp.read.return_value = json.dumps(data).encode()
+    resp.__enter__ = MagicMock(return_value=resp)
+    resp.__exit__ = MagicMock(return_value=False)
+    return resp
+
+
 class TestGetToken:
     @patch("deployer.github_auth.urllib.request.urlopen")
     @patch("builtins.open", mock_open(read_data="fake-private-key"))
     def test_creates_installation_token(self, mock_urlopen: MagicMock):
-        mock_response = MagicMock()
-        mock_response.read.return_value = json.dumps(
-            {"token": "ghs_test_token"}
-        ).encode()
-        mock_response.__enter__ = MagicMock(return_value=mock_response)
-        mock_response.__exit__ = MagicMock(return_value=False)
-        mock_urlopen.return_value = mock_response
+        mock_urlopen.side_effect = [
+            _mock_urlopen_response({"slug": "my-app"}),
+            _mock_urlopen_response({"token": "ghs_test_token"}),
+        ]
 
         with patch("deployer.github_auth.jwt.encode", return_value="fake-jwt"):
             auth = GitHubAuth(
@@ -53,8 +58,9 @@ class TestGetToken:
             )
             token = auth.get_token()
 
+        assert auth.slug == "my-app"
         assert token == "ghs_test_token"
-        mock_urlopen.assert_called_once()
+        assert mock_urlopen.call_count == 2
         req = mock_urlopen.call_args[0][0]
         assert "/installations/67890/access_tokens" in req.full_url
 

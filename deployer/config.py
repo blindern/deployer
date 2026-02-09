@@ -22,11 +22,16 @@ class Config:
             "GIT_REPO", "https://github.com/blindern/deployer-test.git"
         )
 
+        app_id = self._require_env("GITHUB_APP_ID")
         self.github_auth = GitHubAuth(
-            app_id=self._require_env("GITHUB_APP_ID"),
+            app_id=app_id,
             private_key_path=self._require_env("GITHUB_APP_PRIVATE_KEY_PATH"),
             installation_id=self._require_env("GITHUB_APP_INSTALLATION_ID"),
         )
+
+        slug = self.github_auth.slug
+        self.git_committer_name = f"{slug}[bot]"
+        self.git_committer_email = f"{app_id}+{slug}[bot]@users.noreply.github.com"
 
         if self.skip_git_push:
             logger.warning("Will not push to Git on changes")

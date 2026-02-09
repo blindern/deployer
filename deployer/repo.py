@@ -42,6 +42,8 @@ class TempRepo:
         self._exec(
             ["git", "clone", "--depth", "1", self._authed_url, "."]
         ).check_returncode()
+        self._exec(["git", "config", "user.name", self.config.git_committer_name])
+        self._exec(["git", "config", "user.email", self.config.git_committer_email])
         self._exec(["git-crypt", "unlock", self.config.git_crypt_key_path])
         logger.info("Repo decrypted")
 

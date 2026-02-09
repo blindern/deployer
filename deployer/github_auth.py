@@ -15,6 +15,20 @@ class GitHubAuth:
         self._installation_id = installation_id
         with open(private_key_path) as f:
             self._private_key = f.read()
+        self.slug = self._fetch_app_slug()
+
+    def _fetch_app_slug(self) -> str:
+        token_jwt = self._create_jwt()
+        req = urllib.request.Request(
+            "https://api.github.com/app",
+            headers={
+                "Authorization": f"Bearer {token_jwt}",
+                "Accept": "application/vnd.github+json",
+            },
+        )
+        with urllib.request.urlopen(req, timeout=30) as resp:
+            data = json.loads(resp.read())
+        return data["slug"]
 
     def get_token(self) -> str:
         token_jwt = self._create_jwt()
