@@ -34,7 +34,7 @@ def deploy(service_locks: ServiceLocks, config: Config, deployer: Deployer):
     if token not in config.valid_tokens:
         return text_response("Token not found", 401)
 
-    current_app.logger.info("Process pid: {}".format(os.getpid()))
+    current_app.logger.info(f"Process pid: {os.getpid()}")
 
     if request.content_length is None or request.content_length == 0:
         return text_response("Missing contents\n", 400)
@@ -47,7 +47,7 @@ def deploy(service_locks: ServiceLocks, config: Config, deployer: Deployer):
     except BadRequest:
         return text_response("Invalid JSON", 400)
 
-    current_app.logger.info("Received data: {}".format(body))
+    current_app.logger.info(f"Received data: {body}")
 
     try:
         model = DeployRequest.model_validate(body)
@@ -65,17 +65,17 @@ def deploy(service_locks: ServiceLocks, config: Config, deployer: Deployer):
         if key not in service.mappings:
             return text_response(f"Unknown attribute: '{key}'", 400)
 
-    handle_kwargs = dict(
-        service=service,
-        attributes=model.attributes,
-        force_deploy=model.forceDeploy or len(model.attributes) == 0,
-    )
+    force_deploy = model.forceDeploy or len(model.attributes) == 0
 
     if "stream" in request.args:
 
         def generate():
             with service_locks.hold_lock(service.service_name):
-                yield from deployer.handle(**handle_kwargs)
+                yield from deployer.handle(
+                    service=service,
+                    attributes=model.attributes,
+                    force_deploy=force_deploy,
+                )
 
         return Response(
             stream_with_context(generate()),
@@ -84,7 +84,13 @@ def deploy(service_locks: ServiceLocks, config: Config, deployer: Deployer):
         )
 
     with service_locks.hold_lock(service.service_name):
-        output = list(deployer.handle(**handle_kwargs))
+        output = list(
+            deployer.handle(
+                service=service,
+                attributes=model.attributes,
+                force_deploy=force_deploy,
+            )
+        )
 
     if any("DEPLOY FAILED" in line for line in output):
         return text_response("".join(output), 500)
