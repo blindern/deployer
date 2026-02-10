@@ -14,7 +14,10 @@ uv run flask run                     # Dev server (port 5000)
 uv run pytest                        # Run all tests
 uv run pytest tests/test_app.py      # Run single test file
 uv run pytest -k test_name           # Run specific test
-uv run pre-commit run --all-files    # Lint + format
+uv run pre-commit run --all-files    # Lint + format + type check
+uv run ruff check --fix .            # Lint (with auto-fix)
+uv run ruff format .                 # Format
+uv run ty check                      # Type check
 ```
 
 ## Architecture
