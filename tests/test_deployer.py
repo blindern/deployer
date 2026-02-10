@@ -26,21 +26,24 @@ class TestDeployer:
         injector: Injector,
     ):
         # Avoid any real side effect.
-        mock_ansible_deploy.return_value = None
+        mock_ansible_deploy.return_value = []
         mock_push_changes.side_effect = [RaceException, None]
 
         config = injector.get(Config)
         deployer = Deployer(config=config)
 
-        deployer.handle(
-            service=config.services["test-service1"],
-            attributes={
-                "value": "hello",
-            },
-            force_deploy=False,
+        output = list(
+            deployer.handle(
+                service=config.services["test-service1"],
+                attributes={
+                    "value": "hello",
+                },
+                force_deploy=False,
+            )
         )
 
         assert mock_push_changes.call_count == 2
+        assert "DEPLOY OK\n" in output
 
     @patch("deployer.repo.TempRepo.push_changes")
     @patch("deployer.github_auth.GitHubAuth.get_token", return_value="fake-token")
@@ -55,15 +58,18 @@ class TestDeployer:
         config = injector.get(Config)
         deployer = Deployer(config=config)
 
-        deployer.handle(
-            service=config.services["test-service1"],
-            attributes={
-                "value": "hello",
-            },
-            force_deploy=False,
+        output = list(
+            deployer.handle(
+                service=config.services["test-service1"],
+                attributes={
+                    "value": "hello",
+                },
+                force_deploy=False,
+            )
         )
 
         mock_push_changes.assert_called_once()
+        assert "DEPLOY OK\n" in output
 
     @patch("deployer.repo.TempRepo.push_changes")
     @patch("deployer.deployer.Deployer._ansible_deploy")
@@ -76,19 +82,22 @@ class TestDeployer:
         injector: Injector,
     ):
         # Avoid any real side effect.
-        mock_ansible_deploy.return_value = None
+        mock_ansible_deploy.return_value = []
         mock_push_changes.return_value = None
 
         config = injector.get(Config)
         deployer = Deployer(config=config)
 
-        deployer.handle(
-            service=config.services["test-service1"],
-            attributes={},
-            force_deploy=False,
+        output = list(
+            deployer.handle(
+                service=config.services["test-service1"],
+                attributes={},
+                force_deploy=False,
+            )
         )
 
         mock_ansible_deploy.assert_not_called()
+        assert "No changes found, skipping deploy\n" in output
 
     @patch("deployer.repo.TempRepo.push_changes")
     @patch("deployer.deployer.Deployer._ansible_deploy")
@@ -101,17 +110,20 @@ class TestDeployer:
         injector: Injector,
     ):
         # Avoid any real side effect.
-        mock_ansible_deploy.return_value = None
+        mock_ansible_deploy.return_value = []
         mock_push_changes.return_value = None
 
         config = injector.get(Config)
         deployer = Deployer(config=config)
 
-        deployer.handle(
-            service=config.services["test-service1"],
-            attributes={},
-            force_deploy=True,
+        output = list(
+            deployer.handle(
+                service=config.services["test-service1"],
+                attributes={},
+                force_deploy=True,
+            )
         )
 
         mock_ansible_deploy.assert_called_once()
         mock_push_changes.assert_not_called()
+        assert "DEPLOY OK\n" in output

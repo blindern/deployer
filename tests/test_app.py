@@ -68,7 +68,7 @@ class TestApp:
         client: FlaskClient,
     ):
         # Avoid any real side effect.
-        mock_ansible_deploy.return_value = None
+        mock_ansible_deploy.return_value = []
         mock_push_changes.return_value = None
 
         response = client.post(
@@ -85,6 +85,33 @@ class TestApp:
 
     @patch("deployer.repo.TempRepo.push_changes")
     @patch("deployer.deployer.Deployer._ansible_deploy")
+    @patch("deployer.github_auth.GitHubAuth.get_token", return_value="fake-token")
+    def test_stream(
+        self,
+        mock_get_token: MagicMock,
+        mock_ansible_deploy: MagicMock,
+        mock_push_changes: MagicMock,
+        client: FlaskClient,
+    ):
+        mock_ansible_deploy.return_value = []
+        mock_push_changes.return_value = None
+
+        response = client.post(
+            "/deploy?stream",
+            json={
+                "service": "test-service1",
+                "attributes": {"value": "hello"},
+            },
+            headers={
+                "authorization": "bearer abc",
+            },
+        )
+        assert response.status_code == 200, response.text
+        assert response.content_type == "text/plain; charset=utf-8"
+        assert "DEPLOY OK" in response.text
+
+    @patch("deployer.repo.TempRepo.push_changes")
+    @patch("deployer.deployer.Deployer._ansible_deploy")
     @patch("deployer.deployer.Deployer.handle")
     def test_lock(
         self,
@@ -94,11 +121,12 @@ class TestApp:
         client: FlaskClient,
     ):
         # Avoid any real side effect.
-        mock_ansible_deploy.return_value = None
+        mock_ansible_deploy.return_value = []
         mock_push_changes.return_value = None
 
         def side_effect(*args, **kwargs):
             time.sleep(1)
+            return []
 
         mock_handle.side_effect = side_effect
 

@@ -1,6 +1,6 @@
 import os
 
-from flask import Blueprint, Response, current_app, request
+from flask import Blueprint, Response, current_app, request, stream_with_context
 from pydantic import BaseModel, StrictBool, StrictStr, ValidationError
 from werkzeug.exceptions import BadRequest
 
@@ -65,12 +65,29 @@ def deploy(service_locks: ServiceLocks, config: Config, deployer: Deployer):
         if key not in service.mappings:
             return text_response(f"Unknown attribute: '{key}'", 400)
 
-    with service_locks.hold_lock(service.service_name):
-        deployer.handle(
-            service=service,
-            attributes=model.attributes,
-            force_deploy=model.forceDeploy or len(model.attributes) == 0,
+    handle_kwargs = dict(
+        service=service,
+        attributes=model.attributes,
+        force_deploy=model.forceDeploy or len(model.attributes) == 0,
+    )
+
+    if "stream" in request.args:
+
+        def generate():
+            with service_locks.hold_lock(service.service_name):
+                yield from deployer.handle(**handle_kwargs)
+
+        return Response(
+            stream_with_context(generate()),
+            mimetype="text/plain",
+            headers={"X-Accel-Buffering": "no"},
         )
+
+    with service_locks.hold_lock(service.service_name):
+        output = list(deployer.handle(**handle_kwargs))
+
+    if any("DEPLOY FAILED" in line for line in output):
+        return text_response("".join(output), 500)
 
     return text_response("OK\n", 200)
 

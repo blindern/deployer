@@ -35,7 +35,7 @@ class Deployer:
         service: ServiceModel,
         deployer_json_file: Path,
         patch_values: dict[str, str],
-    ) -> None:
+    ):
         attempt = 0
         while attempt < 4:
             attempt += 1
@@ -45,6 +45,7 @@ class Deployer:
                 return
             except RaceException:
                 logger.info("Detected race while pushing")
+                yield "Detected race while pushing, retrying\n"
 
                 repo.fetch_latest_and_reset()
 
@@ -63,6 +64,7 @@ class Deployer:
     def _ansible_deploy(self, cwd: Path, tag: str, host: str):
         cmd = ["ansible-playbook", "site.yml", "-i", "hosts", "-l", host, "-t", tag]
         logger.info(f"Will run: {cmd}")
+        yield f"Running: {' '.join(cmd)}\n"
 
         process = subprocess.Popen(
             cmd,
@@ -76,7 +78,9 @@ class Deployer:
             line = process.stdout.readline()
             if not line:
                 break
-            logger.info(f"[ANSIBLE] {line.decode()}".strip())
+            decoded = line.decode().rstrip("\n")
+            logger.info(f"[ANSIBLE] {decoded}")
+            yield decoded + "\n"
 
         returncode = process.wait()
 
@@ -100,6 +104,7 @@ class Deployer:
         repo = TempRepo(self.config)
         try:
             logger.info("Checking out repo")
+            yield "Checking out repo\n"
             repo.checkout()
 
             deployer_json_file: Path = (
@@ -117,27 +122,38 @@ class Deployer:
             if previous_content == updated_content:
                 logger.info("No changes found")
                 if not force_deploy:
+                    yield "No changes found, skipping deploy\n"
                     return
             else:
                 self._write_deployer_file(deployer_json_file, updated_content)
+                for key, value in patch_values.items():
+                    prev = previous_content.get(key)
+                    if prev != value:
+                        yield f"Update {key}: '{prev}' -> '{value}'\n"
 
             start = time.time()
 
-            self._ansible_deploy(
+            yield from self._ansible_deploy(
                 cwd=Path(repo.path) / self.config.ansible_path,
                 tag=service.ansible_tag,
                 host=service.ansible_host,
             )
 
-            logger.info(f"Ansible deploy completed in {time.time() - start} s")
+            elapsed = time.time() - start
+            logger.info(f"Ansible deploy completed in {elapsed:.1f}s")
+            yield f"Ansible deploy completed in {elapsed:.1f}s\n"
 
             if previous_content != updated_content:
-                self._write_changes(
+                yield from self._write_changes(
                     repo=repo,
                     service=service,
                     deployer_json_file=deployer_json_file,
                     patch_values=patch_values,
                 )
 
+            yield "DEPLOY OK\n"
+        except Exception as e:
+            logger.exception("Deploy failed")
+            yield f"DEPLOY FAILED: {e}\n"
         finally:
             repo.cleanup()
