@@ -3,7 +3,7 @@ name = "blindern-deployer"
 version = "0.1.0"
 description = "Automated deployment of our services"
 authors = [{ name = "Henrik Steen", email = "henrist@henrist.net" }]
-requires-python = "==3.13.*"
+requires-python = "==3.14.*"
 dependencies = [
     "ansible==13.3.0",
     "Flask==3.1.3",
