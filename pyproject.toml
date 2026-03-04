@@ -13,7 +13,7 @@ dependencies = [
     "NamedAtomicLock==1.1.3",
     "pydantic==2.12.5",
     "PyJWT[crypto]>=2.8.0",
-    "python-dotenv==1.2.1",
+    "python-dotenv==1.2.2",
 ]
 
 [dependency-groups]
