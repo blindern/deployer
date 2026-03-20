@@ -98,6 +98,11 @@ def deploy(service_locks: ServiceLocks, config: Config, deployer: Deployer):
     return text_response("OK\n", 200)
 
 
+@api.route("/health")
+def health():
+    return "ok"
+
+
 @api.route("/")
 def hello():
     return "https://github.com/blindern/deployer"

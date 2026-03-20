@@ -22,4 +22,6 @@ COPY deployer /code/deployer
 COPY container/ssh_config /root/.ssh/config
 
 EXPOSE 8000
-CMD ["uv", "run", "--no-dev", "gunicorn", "--timeout", "900", "-b", "0.0.0.0:8000", "--threads", "4", "deployer.app:app"]
+HEALTHCHECK --interval=30s --timeout=10s --retries=3 --start-period=15s \
+  CMD ["python3", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health', timeout=5)"]
+CMD ["uv", "run", "--no-dev", "gunicorn", "--timeout", "900", "-b", "0.0.0.0:8000", "--workers", "2", "--threads", "4", "deployer.app:app"]

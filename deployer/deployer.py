@@ -1,6 +1,7 @@
 import json
 import logging
 import subprocess
+import threading
 import time
 from pathlib import Path
 from typing import Any
@@ -10,6 +11,11 @@ from deployer.repo import RaceException, TempRepo
 from deployer.services import ServiceModel
 
 logger = logging.getLogger(__name__)
+
+# Kills the ansible subprocess to prevent gunicorn threads from blocking
+# indefinitely on hung processes. Less than nginx's 900s proxy_read_timeout
+# to allow returning a proper error instead of a bare 504.
+ANSIBLE_TIMEOUT = 840
 
 
 class Deployer:
@@ -73,19 +79,36 @@ class Deployer:
             cwd=cwd,
         )
 
-        assert process.stdout is not None
-        while process.stdout.readable():
-            line = process.stdout.readline()
-            if not line:
-                break
-            decoded = line.decode().rstrip("\n")
-            logger.info(f"[ANSIBLE] {decoded}")
-            yield decoded + "\n"
+        # Kill ansible if it exceeds the timeout to prevent thread deadlock.
+        timed_out = threading.Event()
 
-        returncode = process.wait()
+        def kill_on_timeout():
+            timed_out.set()
+            logger.warning(f"Ansible timed out after {ANSIBLE_TIMEOUT}s, killing")
+            process.kill()
 
-        if returncode != 0:
-            raise RuntimeError(f"Ansible failed with exit code {returncode}")
+        timer = threading.Timer(ANSIBLE_TIMEOUT, kill_on_timeout)
+        timer.start()
+
+        try:
+            assert process.stdout is not None
+            while process.stdout.readable():
+                line = process.stdout.readline()
+                if not line:
+                    break
+                decoded = line.decode().rstrip("\n")
+                logger.info(f"[ANSIBLE] {decoded}")
+                yield decoded + "\n"
+
+            process.wait()
+        finally:
+            timer.cancel()
+
+        if timed_out.is_set():
+            raise RuntimeError(f"Ansible timed out after {ANSIBLE_TIMEOUT}s")
+
+        if process.returncode != 0:
+            raise RuntimeError(f"Ansible failed with exit code {process.returncode}")
 
     def _write_deployer_file(
         self, deployer_json_file: Path, content: dict[str, str]

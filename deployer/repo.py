@@ -23,8 +23,10 @@ class TempRepo:
             config.git_repo, self._token
         )
 
-    def _exec(self, cmd: list[str]) -> subprocess.CompletedProcess:
-        res = subprocess.run(cmd, cwd=self._repo_dir.name, capture_output=True)
+    def _exec(self, cmd: list[str], timeout: int = 300) -> subprocess.CompletedProcess:
+        res = subprocess.run(
+            cmd, cwd=self._repo_dir.name, capture_output=True, timeout=timeout
+        )
         if res.stdout is not None:
             stdout = GitHubAuth.redact_token(
                 res.stdout.decode(errors="replace"), self._token
