@@ -11,7 +11,7 @@ RUN set -eux; \
     git config --global user.name "Deployer"; \
     git config --global user.email "it-gruppa@foreningenbs.no"
 
-COPY --from=ghcr.io/astral-sh/uv:0.13.9@sha256:d3b601f0c7b118bc1753febf7c41cc80981df678445e0254284eecf84db79a7d /uv /uvx /bin/
+COPY --from=astral/uv:0.13.9@sha256:d3b601f0c7b118bc1753febf7c41cc80981df678445e0254284eecf84db79a7d /uv /uvx /bin/
 
 WORKDIR /code
 COPY uv.lock pyproject.toml /code/
