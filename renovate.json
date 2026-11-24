@@ -19,7 +19,8 @@
     {
       "matchDepNames": ["python"],
       "matchUpdateTypes": ["major", "minor"],
-      "groupName": "python"
+      "groupName": "python",
+      "minimumGroupSize": 2
     },
     {
       "matchDepNames": ["ruff", "astral-sh/ruff-pre-commit"],
