@@ -13,24 +13,21 @@
   "automerge": true,
   "automergeType": "branch",
   "prCreation": "not-pending",
-  "stabilityDays": 3,
+  "minimumReleaseAge": "3 days",
   "prNotPendingHours": 74,
   "packageRules": [
     {
-      "matchDepNames": ["black", "psf/black"],
-      "groupName": "black"
+      "matchDepNames": ["python"],
+      "matchUpdateTypes": ["major", "minor"],
+      "groupName": "python"
     },
     {
-      "matchDepNames": ["isort", "PyCQA/isort"],
-      "groupName": "isort"
+      "matchDepNames": ["ruff", "astral-sh/ruff-pre-commit"],
+      "groupName": "ruff"
     },
     {
-      "matchDepNames": ["autoflake", "PyCQA/autoflake"],
-      "groupName": "autoflake"
-    },
-    {
-      "matchDepNames": ["flake8", "PyCQA/flake8"],
-      "groupName": "flake8"
+      "matchDepNames": ["astral-sh/uv", "ghcr.io/astral-sh/uv"],
+      "groupName": "uv"
     }
   ]
 }
