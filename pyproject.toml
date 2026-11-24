@@ -43,6 +43,3 @@ select = [
     "I",     # isort
     "UP",    # pyupgrade
 ]
-
-[tool.ty.rules]
-import-not-found = "warn"
