@@ -1,4 +1,4 @@
-FROM python:3.13-slim@sha256:85dfbf1b566b7addfe645faea9938e81a0a01a83580b0ea05fb23706357d77fb
+FROM python:3.15-slim@sha256:63bb298d2b7b88f176f51b5189f54ce6535c997682ea70885d2132f5d473a8a5
 
 RUN set -eux; \
     apt-get update; \
@@ -11,7 +11,7 @@ RUN set -eux; \
     git config --global user.name "Deployer"; \
     git config --global user.email "it-gruppa@foreningenbs.no"
 
-COPY --from=ghcr.io/astral-sh/uv:0.9.10 /uv /uvx /bin/
+COPY --from=ghcr.io/astral-sh/uv:0.13.9 /uv /uvx /bin/
 
 WORKDIR /code
 COPY uv.lock pyproject.toml /code/

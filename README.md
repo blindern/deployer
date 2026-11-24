@@ -30,8 +30,6 @@ Authorization is based on pre-configured tokens.
 
 ## Development
 
-This has been built with Python 3.13.
-
 You need `uv`. See https://docs.astral.sh/uv/
 
 Copy `.env.template` to `.env` and modify it to your needs.
