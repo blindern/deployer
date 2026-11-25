@@ -30,10 +30,14 @@ class GitHubAuth:
             data = json.loads(resp.read())
         slug = data["slug"]
 
-        # Fetch bot user ID (different from app ID)
+        # Fetch bot user ID (different from app ID). Authenticated, as the
+        # anonymous rate limit is per IP and shared on CI runners.
         req = urllib.request.Request(
             f"https://api.github.com/users/{slug}%5Bbot%5D",
-            headers={"Accept": "application/vnd.github+json"},
+            headers={
+                "Authorization": f"Bearer {self._create_installation_token(token_jwt)}",
+                "Accept": "application/vnd.github+json",
+            },
         )
         with urllib.request.urlopen(req, timeout=30) as resp:
             user_data = json.loads(resp.read())
