@@ -11,7 +11,7 @@ RUN set -eux; \
     git config --global user.name "Deployer"; \
     git config --global user.email "it-gruppa@foreningenbs.no"
 
-COPY --from=astral/uv:0.13.9@sha256:d3b601f0c7b118bc1753febf7c41cc80981df678445e0254284eecf84db79a7d /uv /uvx /bin/
+COPY --from=astral/uv:0.13.10@sha256:a3ea1357342c1a4bf9a0c53a3deb1b55379aefa037338d8113d5771efa01774f /uv /uvx /bin/
 ENV UV_PYTHON_DOWNLOADS=never
 
 WORKDIR /code
